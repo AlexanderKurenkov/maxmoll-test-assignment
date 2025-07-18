@@ -71,25 +71,19 @@ class OrderController extends Controller
 
     public function complete(int $id): JsonResponse
     {
-        // Валидация параметра $id
-        Order::where('status', 'active')->findOrFail($id);
         $this->orderService->completeOrder($id);
-        return response()->json(['message' => 'Order completed']);
+        return response()->json(['message' => 'Заказ выполнен']);
     }
 
     public function cancel(int $id): JsonResponse
     {
-        // Валидация перенесена в контроллер
-        // Order::where('status', 'active')->findOrFail($id);
         $this->orderService->cancelOrder($id);
-        return response()->json(['message' => 'Order canceled']);
+        return response()->json(['message' => 'Заказ отменен']);
     }
 
     public function resume(int $id): JsonResponse
     {
-        // Валидация перенесена в сервис
-        // Order::where('status', 'canceled')->findOrFail($id);
         $this->orderService->resumeOrder($id);
-        return response()->json(['message' => 'Order resumed']);
+        return response()->json(['message' => 'Порядок возобновлен']);
     }
 }

@@ -130,7 +130,7 @@ class OrderService
 
         if (!$stock || $stock->stock < $count) {
             throw ValidationException::withMessages([
-                'stock' => "Not enough stock for product ID {$productId}"
+                'stock' => "Недостаточно товара на складе с ID = {$productId}"
             ]);
         }
 
