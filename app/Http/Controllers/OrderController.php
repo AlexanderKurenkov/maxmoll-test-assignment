@@ -10,12 +10,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Info(title="API заказов", version="1.0")
+ */
 class OrderController extends Controller
 {
+    /**
+     * @param OrderService $orderService Сервис для работы с заказами.
+     */
     public function __construct(private OrderService $orderService) {}
 
+    /**
+     * Получение списка заказов с фильтрацией и пагинацией.
+     *
+     * @param Request $request HTTP-запрос.
+     * @return JsonResponse JSON-ответ со списком заказов.
+     */
     public function index(Request $request): JsonResponse
     {
+        // Валидация параметров запроса
         $validated = $request->validate([
             'customer' => 'nullable|string|max:255',
             'status' => 'nullable|string|in:active,completed,canceled',
@@ -29,6 +42,7 @@ class OrderController extends Controller
         $page = $validated['page'] ?? 1;
         $perPage = $validated['per_page'] ?? 15;
 
+        // Формирование фильтров
         $filters = [
             'customer' => $validated['customer'] ?? null,
             'status' => $validated['status'] ?? null,
@@ -37,12 +51,20 @@ class OrderController extends Controller
             'created_to' => $validated['created_to'] ?? null,
         ];
 
+        // Получение заказов через сервис
         $orders = $this->orderService->getOrders($filters, $perPage, $page);
         return response()->json($orders);
     }
 
+    /**
+     * Создание нового заказа.
+     *
+     * @param Request $request HTTP-запрос с данными заказа.
+     * @return JsonResponse JSON-ответ с созданным заказом.
+     */
     public function store(Request $request): JsonResponse
     {
+        // Валидация данных нового заказа
         $validated = $request->validate([
             'customer' => 'required|string|max:255',
             'warehouse_id' => ['required', 'integer', Rule::exists('warehouses', 'id')],
@@ -51,12 +73,21 @@ class OrderController extends Controller
             'items.*.count' => 'required|integer|min:1',
         ]);
 
+        // Создание заказа через сервис
         $order = $this->orderService->createOrder($validated);
         return response()->json($order, 201);
     }
 
+    /**
+     * Обновление существующего заказа.
+     *
+     * @param Request $request HTTP-запрос с данными для обновления.
+     * @param int $id ID заказа.
+     * @return JsonResponse JSON-ответ с обновленным заказом.
+     */
     public function update(Request $request, int $id): JsonResponse
     {
+        // Валидация данных для обновления
         $validated = $request->validate([
             'customer' => 'required|string|max:255',
             'items' => 'required|array|min:1',
@@ -64,23 +95,42 @@ class OrderController extends Controller
             'items.*.count' => 'required|integer|min:1',
         ]);
 
+        // Обновление заказа через сервис
         $order = $this->orderService->updateOrder($id, $validated);
 
         return response()->json($order);
     }
 
+    /**
+     * Завершение заказа.
+     *
+     * @param int $id ID заказа.
+     * @return JsonResponse JSON-ответ с сообщением о выполнении.
+     */
     public function complete(int $id): JsonResponse
     {
         $this->orderService->completeOrder($id);
         return response()->json(['message' => 'Заказ выполнен']);
     }
 
+    /**
+     * Отмена заказа.
+     *
+     * @param int $id ID заказа.
+     * @return JsonResponse JSON-ответ с сообщением об отмене.
+     */
     public function cancel(int $id): JsonResponse
     {
         $this->orderService->cancelOrder($id);
         return response()->json(['message' => 'Заказ отменен']);
     }
 
+    /**
+     * Возобновление отмененного заказа.
+     *
+     * @param int $id ID заказа.
+     * @return JsonResponse JSON-ответ с сообщением о возобновлении.
+     */
     public function resume(int $id): JsonResponse
     {
         $this->orderService->resumeOrder($id);
