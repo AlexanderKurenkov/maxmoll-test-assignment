@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Environment
+.env
+.env.testing
+
+# Laravel Storage
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*.log
+!/storage/logs/.gitignore
+
+# Laravel Bootstrap Cache
+/bootstrap/cache/*.php
+
+# Testing
+/tests/
+phpunit.xml
+
+# IDE / Editor specific
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# PNPM/NPM/Yarn logs
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
