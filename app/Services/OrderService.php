@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Request;
 
 class OrderService
 {
     public function getOrders(array $filters = [], int $perPage = 15, int $page = 1)
     {
-        // Новый экземпляр построителя запросов Eloquent.
         $query = Order::query();
 
         if (!empty($filters['customer'])) {
@@ -38,7 +36,6 @@ class OrderService
             $query->whereDate('created_at', '<=', $filters['created_to']);
         }
 
-        // Выполнить SQL-запрос с пагинацией.
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
@@ -137,6 +134,12 @@ class OrderService
         Stock::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->decrement('stock', $count);
+
+        StockMovement::create([
+            'product_id' => $productId,
+            'warehouse_id' => $warehouseId,
+            'quantity_change' => -$count,
+        ]);
     }
 
     private function increaseStock(int $productId, int $warehouseId, int $count): void
@@ -145,5 +148,11 @@ class OrderService
             ->where('warehouse_id', $warehouseId)
             ->lockForUpdate()
             ->increment('stock', $count);
+
+        StockMovement::create([
+            'product_id' => $productId,
+            'warehouse_id' => $warehouseId,
+            'quantity_change' => $count,
+        ]);
     }
 }
