@@ -59,9 +59,11 @@ INSERT INTO order_items (order_id, product_id, count) VALUES
 -- Insert stocks
 INSERT INTO stocks (product_id, warehouse_id, stock) VALUES
 (1, 1, 50),
+(1, 2, 20),
 (2, 2, 40),
 (3, 3, 70),
 (4, 4, 90),
+(4, 2, 80),
 (5, 5, 20),
 (6, 6, 15),
 (7, 7, 35),

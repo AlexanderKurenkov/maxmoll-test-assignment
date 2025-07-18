@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -39,13 +40,29 @@ class OrderController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $order = $this->orderService->createOrder($request->all());
+        $validated = $request->validate([
+            'customer' => 'required|string|max:255',
+            'warehouse_id' => ['required', 'integer', Rule::exists('warehouses', 'id')],
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => ['required', 'integer', Rule::exists('products', 'id')],
+            'items.*.count' => 'required|integer|min:1',
+        ]);
+
+        $order = $this->orderService->createOrder($validated);
         return response()->json($order, 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $order = $this->orderService->updateOrder($id, $request->all());
+        $validated = $request->validate([
+            'customer' => 'required|string|max:255',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => ['required', 'integer', Rule::exists('products', 'id')],
+            'items.*.count' => 'required|integer|min:1',
+        ]);
+
+        $order = $this->orderService->updateOrder($id, $validated);
+
         return response()->json($order);
     }
 

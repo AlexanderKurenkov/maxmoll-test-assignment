@@ -132,7 +132,9 @@ class OrderService
             ]);
         }
 
-        $stock->decrement('stock', $count);
+        Stock::where('product_id', $productId)
+            ->where('warehouse_id', $warehouseId)
+            ->decrement('stock', $count);
     }
 
     private function increaseStock(int $productId, int $warehouseId, int $count): void

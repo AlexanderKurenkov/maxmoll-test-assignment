@@ -12,14 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Order
- * 
+ *
  * @property int $id
  * @property string $customer
  * @property Carbon $created_at
  * @property Carbon|null $completed_at
  * @property int $warehouse_id
  * @property string $status
- * 
+ *
  * @property Warehouse $warehouse
  * @property Collection|OrderItem[] $order_items
  *
@@ -47,7 +47,7 @@ class Order extends Model
 		return $this->belongsTo(Warehouse::class);
 	}
 
-	public function order_items()
+	public function items()
 	{
 		return $this->hasMany(OrderItem::class);
 	}
