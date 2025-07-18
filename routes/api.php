@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->prefix('orders')->group(function () {
@@ -11,3 +12,5 @@ Route::middleware('auth:sanctum')->prefix('orders')->group(function () {
     Route::post('{id}/cancel', [OrderController::class, 'cancel']); // отменить
     Route::post('{id}/resume', [OrderController::class, 'resume']); // возобновить
 });
+
+Route::middleware('auth:sanctum')->get('/warehouses', [WarehouseController::class, 'index']); // получение списка складов
