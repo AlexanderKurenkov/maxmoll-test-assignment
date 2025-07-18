@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -68,18 +71,24 @@ class OrderController extends Controller
 
     public function complete(int $id): JsonResponse
     {
+        // Валидация параметра $id
+        Order::where('status', 'active')->findOrFail($id);
         $this->orderService->completeOrder($id);
         return response()->json(['message' => 'Order completed']);
     }
 
     public function cancel(int $id): JsonResponse
     {
+        // Валидация перенесена в контроллер
+        // Order::where('status', 'active')->findOrFail($id);
         $this->orderService->cancelOrder($id);
         return response()->json(['message' => 'Order canceled']);
     }
 
     public function resume(int $id): JsonResponse
     {
+        // Валидация перенесена в сервис
+        // Order::where('status', 'canceled')->findOrFail($id);
         $this->orderService->resumeOrder($id);
         return response()->json(['message' => 'Order resumed']);
     }
