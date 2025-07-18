@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Services\OrderService;
@@ -11,7 +12,29 @@ class OrderController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        return response()->json($this->orderService->getOrders($request));
+        $validated = $request->validate([
+            'customer' => 'nullable|string|max:255',
+            'status' => 'nullable|string|in:active,completed,canceled',
+            'warehouse_id' => 'nullable|integer|min:1',
+            'created_from' => 'nullable|date',
+            'created_to' => 'nullable|date|after_or_equal:created_from',
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $page = $validated['page'] ?? 1;
+        $perPage = $validated['per_page'] ?? 15;
+
+        $filters = [
+            'customer' => $validated['customer'] ?? null,
+            'status' => $validated['status'] ?? null,
+            'warehouse_id' => $validated['warehouse_id'] ?? null,
+            'created_from' => $validated['created_from'] ?? null,
+            'created_to' => $validated['created_to'] ?? null,
+        ];
+
+        $orders = $this->orderService->getOrders($filters, $perPage, $page);
+        return response()->json($orders);
     }
 
     public function store(Request $request): JsonResponse
