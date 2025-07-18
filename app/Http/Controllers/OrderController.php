@@ -134,6 +134,6 @@ class OrderController extends Controller
     public function resume(int $id): JsonResponse
     {
         $this->orderService->resumeOrder($id);
-        return response()->json(['message' => 'Порядок возобновлен']);
+        return response()->json(['message' => 'Заказ возобновлен']);
     }
 }
