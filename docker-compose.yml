@@ -11,9 +11,16 @@ services:
       mysql:
         condition: service_healthy
     command: >
-      sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-      && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-      && docker-php-entrypoint php-fpm"
+      sh -c "
+      echo 'Ожидание запуска сервиса MySQL...';
+      sleep 5 &&
+      chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
+      chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache &&
+      php artisan migrate &&
+      php artisan optimize:clear &&
+      php artisan config:cache &&
+      php artisan route:cache &&
+      docker-php-entrypoint php-fpm"
     logging:
       driver: "json-file"
       options:
@@ -41,10 +48,10 @@ services:
     image: mysql:8.4
     container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
     volumes:
       - db_data:/var/lib/mysql
       - ./database/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro

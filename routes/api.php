@@ -6,7 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockMovementController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index']); // фильтры + пагинация
         Route::post('/', [OrderController::class, 'store']); // создать заказ
