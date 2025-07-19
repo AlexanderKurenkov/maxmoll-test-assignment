@@ -1,14 +1,22 @@
+DROP DATABASE IF EXISTS maxmoll_test_assignment;
+CREATE DATABASE maxmoll_test_assignment;
+
+USE maxmoll_test_assignment;
+
+DROP TABLE IF EXISTS products;
 CREATE TABLE products (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     price FLOAT NOT NULL
 );
 
+DROP TABLE IF EXISTS warehouses;
 CREATE TABLE warehouses (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
+DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     customer VARCHAR(255) NOT NULL,
@@ -18,6 +26,7 @@ CREATE TABLE orders (
     status VARCHAR(255) NOT NULL CHECK (status IN ('active', 'completed', 'canceled'))
 );
 
+DROP TABLE IF EXISTS order_items;
 CREATE TABLE order_items (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT UNSIGNED NOT NULL,
@@ -25,6 +34,7 @@ CREATE TABLE order_items (
     count INT NOT NULL
 );
 
+DROP TABLE IF EXISTS stocks;
 CREATE TABLE stocks (
     product_id BIGINT UNSIGNED NOT NULL,
     warehouse_id BIGINT UNSIGNED NOT NULL,
