@@ -12,19 +12,23 @@
   $ git clone https://github.com/AlexanderKurenkov/maxmoll-test-assignment.git
   $ cd maxmoll-test-assignment
 
-2. Создать файл .env на основе .env.example и указать значения переменных окружения:
-  $ cp .env.example .env
+2. Создать файл .env и указать значения переменных окружения:
+  # В режиме разработки:
+  $ cp .env.dev.example .env
 
-3. Запустить сервисы из Compose-файла:
+  # В режиме эксплуатации:
+  $ cp .env.prod.example .env
+
+3. Запустить сервисы из Compose-файла (запускает прилолжение в production-режиме):
   # При первом запуске создается схема базы данных (файл /database/sql/schema.sql) и выполняются миграции.
   # При повторных запусках (когда уже создан именованный том) выполняются только миграции.
-  $ docker-compose up -d
+  $ docker compose up -d
 
 4. Выполнить команду db:seed для наполнения базы данных тестовыми данными:
-  $ docker-compose exec php-fpm php artisan db:seed
+  $ docker compose exec php-fpm php artisan db:seed
 
 5. Остановка и удаление запущенных контейнеров (вместе с именованными томами):
-  $ docker-compose down -v
+  $ docker compose down -v
 
 ```
 
@@ -44,7 +48,7 @@
 
 ## Документация API
 
-Документации API в формате OpenAPI доступна по маршруту `/swagger`.
+Документации API в формате OpenAPI доступна по маршруту `/swagger` (доступно только в режиме разработки).
 
 <p align="center">
   <img src="resources/docs/images/openapi.jpg" alt="OpenAPI Documentation" width="600">
@@ -70,6 +74,11 @@ $user->email = 'admin@example.com';
 $user->password = bcrypt('not-a-secure-password');
 $user->save();
 
+// Если уже была выполнена команда `php artisan db:seed`, то вместо создания нового пользовтеля
+// можно получить токен для уже существующего пользователя:
+// $user = \App\Models\User::first();
+
 $token = $user->createToken('orders-token')->plainTextToken;
 echo $token; // Будет выведена строка с токеном в формате `<id>|<токен>`
+
 ```
